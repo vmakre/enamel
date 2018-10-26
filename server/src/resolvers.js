@@ -1,5 +1,5 @@
 const { GraphQLScalarType } = require('graphql')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt-nodejs')
 const jwt = require('jsonwebtoken')
 const moment = require('moment')
 const nodeMailer = require('nodemailer')
