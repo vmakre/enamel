@@ -1,8 +1,8 @@
 # enamel clone 
 
 Nodejs app , 
-server: graphql , apollo , mongodb , jwt.
-client vuejs, apollo , webpack.
+server: graphql with graphql-yoga , apollo , mongodb , jwt.
+client: vuejs, apollo , webpack.
 
 server setup:
 - cd to server directory
