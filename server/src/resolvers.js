@@ -13,12 +13,15 @@ const { welcomeEmail, invitationEmail, notificationNewUser } = require('./emails
 const JWT_SECRET = process.env.JWT_SECRET
 
 const transporter = nodeMailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAI_PORT,
     secure: true,
     auth: {
-      user: process.env.FROM_EMAIL,
-      pass: process.env.GMAIL_PASSWORD
+        user: process.env.FROM_EMAIL,
+        pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 })
 
@@ -125,7 +128,7 @@ const resolvers = {
     async getRecord (_, {id, task, date}, context) {
       const user = getUserId(context)
       if (id) {
-        return await Record.findById(id)       
+        return await Record.findById(id)
       } else {
         return await Record.findOne({
           user,
@@ -212,6 +215,7 @@ const resolvers = {
           })
           users.push(user)
           transporter.sendMail(invitationEmail(email, user, thisUser))
+            console.log('mail sent to:'+ emails)
         }
       }
       const userIds = users.map(o => o.id)
@@ -259,6 +263,9 @@ const resolvers = {
       if (!user) {
         throw new Error('No user with that email')
       }
+     if (user.status == 'Declined' ){
+            throw new Error('User "'+email+'" status Declined')
+        }
       const valid = await bcrypt.compare(password, user.password)
       if (!valid) {
         throw new Error('Incorrect password')
@@ -332,7 +339,7 @@ const resolvers = {
     async deleteRecord (_, {id}, context) {
       const userId = getUserId(context)
       await Record.deleteOne({_id: id})
-      return true      
+      return true
     }
   },
   Date: new GraphQLScalarType({
